@@ -133,7 +133,10 @@ get_my_ip()
 		reset_func_ret
 		local my_ip=$(ip addr |grep inet |grep wlan0|awk '{print $2}' |awk -F "/" '{print $1}')
 		#local my_ip=$(ip addr |grep inet |grep eth0|awk '{print $2}' |awk -F "/" '{print $1}')
-		sleep 10
+		if [ -z "${my_ip}" ]; then
+                        _err Could not get ip, retrying...
+                        sleep 10
+                fi
 	done
 	#echo ${my_ip}
 	_func_ret=${my_ip}
@@ -254,10 +257,6 @@ update_record()
 
 	# Check if need update
 	_debug My IP: ${my_ip}
-	if [ -z "${my_ip}" ]; then
-		_err Could not get my ip, exitting...
-		exit 1
-	fi
 
 	get_domain_ip
 	local domain_ip=${_func_ret}
