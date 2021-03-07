@@ -8,7 +8,7 @@
 ```ini
 [Unit]
 Description=Internal network DDns
-After=dhcpcd.service
+After=networking.service
 [Service]
 Type=oneshot
 ExecStart=/bin/bash path/to/ddns.sh
