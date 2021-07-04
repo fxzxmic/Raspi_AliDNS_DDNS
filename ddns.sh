@@ -236,8 +236,16 @@ send_request()
 
 	local respond=$(curl -3 ${req_url} --silent --connect-timeout 10 -w "HttpCode:%{http_code}")
 
-
 	echo ${respond}
+	
+	httpcode=$(echo ${respond} |grep -Eo '{HTTPCode:[0-9]+}' |grep -Eo '[0-9]+')
+	status=0
+
+	if [ "${httpcode}" != "200" ]; then
+		_log Request failed, HTTP Code: ${httpcode}
+		status=1
+	fi
+	
 	_func_ret=${respond}
 }
 
@@ -259,6 +267,11 @@ update_record()
 	_debug My IP: ${my_ip}
 
 	get_domain_ip
+	
+	if [ "${status}" != "0" ]; then
+		exit ${status}
+	fi
+	
 	local domain_ip=${_func_ret}
 	_debug Current Domain IP: ${domain_ip}
 
@@ -272,6 +285,8 @@ update_record()
 	put_params_UpdateDomainRecord ${my_ip}
 
 	send_request
+	
+	exit ${status}
 }
 
 main()
