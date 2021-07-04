@@ -9,12 +9,27 @@
 [Unit]
 Description=Internal network DDns
 After=networking.service
+
 [Service]
 Type=oneshot
 ExecStart=/bin/bash path/to/ddns.sh
 KillSignal=SIGINT
+
 [Install]
 WantedBy=multi-user.target
+```
+可通过Systemd设置为定时任务，以下为timer文件示例：
+```ini
+[Unit]
+Description=DDNS Timer
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
 ```
 ## 其它
 本项目来自https://github.com/h46incon/AliDDNSBash 对原作者表示感谢  
